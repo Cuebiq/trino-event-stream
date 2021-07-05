@@ -18,7 +18,7 @@
     { "name": "Schema", "type": ["null" ,"string"], "doc": "Schema", "default": null },
     { "name": "EstimatedExecutionTime", "type": ["null" ,"string"], "doc": "EstimatedExecutionTime", "default": null },
     { "name": "EstimatedCpuTime", "type": ["null" ,"string"], "doc": "EstimatedCpuTime", "default": null },
-    { "name": "EstimatedPeakMemory", "type": ["null" ,"string"], "doc": "EstimatedPeakMemory", "default": null },
+    { "name": "EstimatedPeakMemory", "type": ["null" ,"long"], "doc": "EstimatedPeakMemory", "default": null },
     { "name": "TransactionId", "type": ["null" ,"string"], "doc": "Transaction Identifier", "default": null },
     { "name": "UpdateType", "type": ["null" ,"string"], "doc": "UpdateType", "default": null },
     { "name": "PreparedQuery", "type": ["null" ,"string"], "doc": "UpdateType", "default": null },

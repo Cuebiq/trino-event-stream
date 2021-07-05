@@ -47,10 +47,7 @@ class QueryCreatedEventConverter {
                         queryCreatedEvent.getContext().getResourceEstimates().getCpuTime().isPresent() ?
                                 queryCreatedEvent.getContext().getResourceEstimates().getCpuTime().get().toString() : null
                 )
-                .setEstimatedPeakMemory(
-                        queryCreatedEvent.getContext().getResourceEstimates().getPeakMemoryBytes().isPresent() ?
-                                queryCreatedEvent.getContext().getResourceEstimates().getPeakMemoryBytes().get().toString() : null
-                )
+                .setEstimatedPeakMemory(queryCreatedEvent.getContext().getResourceEstimates().getPeakMemoryBytes().orElse(null))
                 .setTransactionId(queryCreatedEvent.getMetadata().getTransactionId().orElse(null))
                 .setUpdateType(queryCreatedEvent.getMetadata().getUpdateType().orElse(null))
                 .setPreparedQuery(queryCreatedEvent.getMetadata().getPreparedQuery().orElse(null))
