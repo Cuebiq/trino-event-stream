@@ -3,20 +3,27 @@
   "namespace": "io.trino.plugin.eventstream",
   "name": "QueryCreatedEventV1",
   "fields": [
-    { "name": "QueryType", "type": "string", "doc": "Query Run Type" },
+    { "name": "CreateTime", "type": "string", "doc": "Query Creation time" },
+    { "name": "User", "type": "string", "doc": "Query user" },
+    { "name": "Environment", "type": "string", "doc": "Environment" },
+    { "name": "QueryType", "type": ["null", "string"], "doc": "Query Run Type" },
     { "name": "Query", "type": "string", "doc": "Query Statement" },
     { "name": "QueryID", "type": "string", "doc": "Query ID" },
-    { "name": "Principle", "type": ["null" ,"string"], "doc": "Principle",
-      "default": null
-    },
-    { "name": "UserAgent", "type": ["null" ,"string"], "doc": "UserAgent",
-      "default": null
-    },
-    { "name": "RemoteClientAddress", "type": ["null" ,"string"], "doc": "RemoteClientAddress",
-      "default": null
-    },
-    { "name": "ClientInfo", "type": ["null" ,"string"], "doc": "ClientInfo",
-      "default": null
-    }
+    { "name": "Principle", "type": ["null" ,"string"], "doc": "Principle", "default": null },
+    { "name": "UserAgent", "type": ["null" ,"string"], "doc": "UserAgent", "default": null },
+    { "name": "RemoteClientAddress", "type": ["null" ,"string"], "doc": "RemoteClientAddress", "default": null },
+    { "name": "ClientInfo", "type": ["null" ,"string"], "doc": "ClientInfo", "default": null },
+    { "name": "Source", "type": ["null" ,"string"], "doc": "Source", "default": null },
+    { "name": "Catalog", "type": ["null" ,"string"], "doc": "Catalog", "default": null },
+    { "name": "Schema", "type": ["null" ,"string"], "doc": "Schema", "default": null },
+    { "name": "EstimatedExecutionTime", "type": ["null" ,"string"], "doc": "EstimatedExecutionTime", "default": null },
+    { "name": "EstimatedCpuTime", "type": ["null" ,"string"], "doc": "EstimatedCpuTime", "default": null },
+    { "name": "EstimatedPeakMemory", "type": ["null" ,"string"], "doc": "EstimatedPeakMemory", "default": null },
+    { "name": "TransactionId", "type": ["null" ,"string"], "doc": "Transaction Identifier", "default": null },
+    { "name": "UpdateType", "type": ["null" ,"string"], "doc": "UpdateType", "default": null },
+    { "name": "PreparedQuery", "type": ["null" ,"string"], "doc": "UpdateType", "default": null },
+    { "name": "QueryState", "type": ["null" ,"string"], "doc": "QueryState", "default": null },
+    { "name": "Tables", "type": {"type": "array", "items": "string"}, "doc": "Tables involved in query", "default": [] },
+    { "name": "Routines", "type": {"type": "array", "items": "string"}, "doc": "Routines involved in query", "default": [] }
   ]
 }

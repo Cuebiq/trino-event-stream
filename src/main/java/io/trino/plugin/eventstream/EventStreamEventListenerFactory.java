@@ -19,50 +19,43 @@ import io.trino.spi.eventlistener.EventListener;
 import io.trino.spi.eventlistener.EventListenerFactory;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
-import java.util.Iterator;
 import java.util.Map;
 
-public class EventStreamEventListenerFactory
-        implements EventListenerFactory
-{
+public class EventStreamEventListenerFactory implements EventListenerFactory {
     private static final Logger log = Logger.get(EventStreamEventListenerFactory.class);
-    // private static final String REGEX_CONFIG_PREFIX = "^event-stream.";
+
+    private static final String KAFKA_PRODUCER_CONFIG_PREXIF = "kafka.producer.";
+    private static final String EVENT_LISTENER_CONFIG_PREFIX = "cuebiq.event.listener.";
 
     @Override
     public String getName()
     {
-        return "event-stream";
+        return "cuebiq-trino-event-stream";
     }
 
     @Override
     public EventListener create(Map<String, String> config)
     {
-        KafkaProducer<String, Object> kafkaProducer =
-                createKafkaProducer(toKafkaConfig(config));
+        Map<String, Object> kafkaProducerConf = toSpecificConfig(config, KAFKA_PRODUCER_CONFIG_PREXIF);
+        Map<String, Object> eventListenerConf = toSpecificConfig(config, EVENT_LISTENER_CONFIG_PREFIX);
 
-        return new EventStreamEventListener(kafkaProducer);
+        KafkaProducer<String, Object> kafkaProducer = createKafkaProducer(kafkaProducerConf);
+
+        return new EventStreamEventListener(kafkaProducer, eventListenerConf);
     }
 
-    /**
-     * Transform event listener configuration into a Kafka configuration.
-     * @param config event listener configuration object
-     * @return Map<String, Object>
-     */
-    private static Map<String, Object> toKafkaConfig(Map<String, String> config)
-    {
+    private static Map<String, Object> toSpecificConfig(
+            Map<String, String> config,
+            String specificPrefix
+    ) {
         ImmutableMap.Builder builder = ImmutableMap.<String, Object>builder();
 
-        Iterator<String> it = config.keySet().iterator();
-
-        while (it.hasNext()) {
-            String key = it.next();
-            // String kafkaConfigKey = key.replaceFirst(REGEX_CONFIG_PREFIX,
-            //         "");
-            log.debug("Loading event-listener config %s", key);
-            builder.put(key, config.get(key));
+        for (String key : config.keySet()) {
+            if (key.startsWith(specificPrefix)) {
+                log.info("Loading config %s", key);
+                builder.put(key.substring(specificPrefix.length()), config.get(key));
+            }
         }
-
-        // TODO design ways to config/code serializer
 
         return builder.build();
     }

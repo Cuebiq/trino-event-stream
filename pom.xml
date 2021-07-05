@@ -24,6 +24,7 @@
 	<properties>
 		<kafka.version>2.5.1</kafka.version>
 		<avro.version>1.9.2</avro.version>
+		<air.check.skip-checkstyle>true</air.check.skip-checkstyle>
 	</properties>
 	
 	<dependencies>
@@ -162,6 +163,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
 	</build>
 

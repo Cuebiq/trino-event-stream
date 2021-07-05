@@ -3,9 +3,18 @@
   "namespace": "io.trino.plugin.eventstream",
   "name": "SplitCompletedEventV1",
   "fields": [
-    { "name": "QueryType", "type": "string", "doc": "Query Run Type" },
     { "name": "QueryID", "type": "string", "doc": "Query ID" },
-    { "name": "QueryStartTime", "type": "string", "doc": "Query Created Time"},
-    { "name": "QueryEndTime", "type": "string", "doc": "Query End Time"}
+    { "name": "StageID", "type": "string", "doc": "Stage ID" },
+    { "name": "TaskID", "type": "string", "doc": "Task ID" },
+    { "name": "SplitStartTime", "type": "string", "doc": "Split Created Time"},
+    { "name": "SplitEndTime", "type": "string", "doc": "Split End Time"},
+    { "name": "CreateTime", "type": "string", "doc": "Creation time" },
+    { "name": "Catalog", "type": ["null" ,"string"], "doc": "Catalog", "default": null },
+    { "name": "CpuTime", "type": "string", "doc": "Cpu Time" },
+    { "name": "WallTime", "type": "string", "doc": "Wall Time" },
+    { "name": "QueuedTime", "type": "string", "doc": "Queued Time" },
+    { "name": "IsFailed", "type": "boolean", "doc": "Whether the split failed or not" },
+    { "name": "FailureType", "type": ["null", "string"], "doc": "Split Failure type", "default": null },
+    { "name": "FailureMessage", "type": ["null", "string"], "doc": "Split Failure message", "default": null }
   ]
 }
