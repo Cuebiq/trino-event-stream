@@ -27,8 +27,19 @@ public class EventStreamEventListener implements EventListener {
 
     private static final Logger log = Logger.get(EventStreamEventListener.class);
     private static final String TRINO_EVENT_TOPIC_CONF_KEY = "event.topic";
+    private static final String QUERY_CREATED_ENABLED_CONF_KEY = "query.created.enabled";
+    private static final String QUERY_COMPLETED_ENABLED_CONF_KEY = "query.completed.enabled";
+    private static final String SPLIT_COMPLETED_ENABLED_CONF_KEY = "split.completed.enabled";
+
+    private static final String queryCreatedEnabledDefault = "true";
+    private static final String queryCompletedEnabledDefault = "true";
+    private static final String splitCompletedEnabledDefault = "false";
+
     private final KafkaProducer kafkaProducer;
     private final String trinoEventTopic;
+    private final boolean queryCreatedEnabled;
+    private final boolean queryCompletedEnabled;
+    private final boolean splitCompletedEnabled;
 
     public EventStreamEventListener(
             KafkaProducer<String, Object> kafkaProducer,
@@ -37,10 +48,29 @@ public class EventStreamEventListener implements EventListener {
     {
         this.kafkaProducer = kafkaProducer;
         trinoEventTopic = eventStreamConfig.get(TRINO_EVENT_TOPIC_CONF_KEY).toString();
+        queryCreatedEnabled = Boolean.parseBoolean(
+                eventStreamConfig
+                        .getOrDefault(QUERY_CREATED_ENABLED_CONF_KEY, queryCreatedEnabledDefault)
+                        .toString()
+        );
+        queryCompletedEnabled = Boolean.parseBoolean(
+                eventStreamConfig
+                        .getOrDefault(QUERY_COMPLETED_ENABLED_CONF_KEY, queryCompletedEnabledDefault)
+                        .toString()
+        );
+        splitCompletedEnabled = Boolean.parseBoolean(
+                eventStreamConfig
+                        .getOrDefault(SPLIT_COMPLETED_ENABLED_CONF_KEY, splitCompletedEnabledDefault)
+                        .toString()
+        );
     }
 
     @Override
     public void queryCreated(QueryCreatedEvent queryCreatedEvent) {
+        if (!queryCreatedEnabled) {
+            log.debug("Ignored queryCreated event. Query id: %s", queryCreatedEvent.getMetadata().getQueryId());
+            return;
+        }
         try {
             kafkaProducer.send(
                     new ProducerRecord<>(
@@ -59,6 +89,10 @@ public class EventStreamEventListener implements EventListener {
 
     @Override
     public void queryCompleted(QueryCompletedEvent queryCompletedEvent) {
+        if (!queryCompletedEnabled) {
+            log.debug("Ignored queryCompleted event. Query id: %s", queryCompletedEvent.getMetadata().getQueryId());
+            return;
+        }
         try {
             kafkaProducer.send(
                     new ProducerRecord<>(
@@ -76,6 +110,10 @@ public class EventStreamEventListener implements EventListener {
 
     @Override
     public void splitCompleted(SplitCompletedEvent splitCompletedEvent) {
+        if (!splitCompletedEnabled) {
+            log.debug("Ignored splitCompleted event. Query id %s", splitCompletedEvent.getQueryId());
+            return;
+        }
         try {
             kafkaProducer.send(
                     new ProducerRecord<>(
