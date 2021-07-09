@@ -10,9 +10,9 @@
     { "name": "SplitEndTime", "type": "string", "doc": "Split End Time"},
     { "name": "CreateTime", "type": "string", "doc": "Creation time" },
     { "name": "Catalog", "type": ["null" ,"string"], "doc": "Catalog", "default": null },
-    { "name": "CpuTime", "type": "string", "doc": "Cpu Time" },
-    { "name": "WallTime", "type": "string", "doc": "Wall Time" },
-    { "name": "QueuedTime", "type": "string", "doc": "Queued Time" },
+    { "name": "CpuTime", "type": "long", "doc": "Cpu Time" },
+    { "name": "WallTime", "type": "long", "doc": "Wall Time" },
+    { "name": "QueuedTime", "type": "long", "doc": "Queued Time" },
     { "name": "IsFailed", "type": "boolean", "doc": "Whether the split failed or not" },
     { "name": "FailureType", "type": ["null", "string"], "doc": "Split Failure type", "default": null },
     { "name": "FailureMessage", "type": ["null", "string"], "doc": "Split Failure message", "default": null }

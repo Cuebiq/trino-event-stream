@@ -14,6 +14,7 @@
 package io.trino.plugin.eventstream;
 
 import io.trino.spi.eventlistener.SplitCompletedEvent;
+import io.trino.spi.eventlistener.SplitFailureInfo;
 
 class SplitCompletedEventConverter {
 
@@ -27,18 +28,20 @@ class SplitCompletedEventConverter {
                 .setSplitEndTime(splitCompletedEvent.getEndTime().toString())
                 .setCreateTime(splitCompletedEvent.getCreateTime().toString())
                 .setCatalog(splitCompletedEvent.getCatalogName().orElse(null))
-                .setCpuTime(splitCompletedEvent.getStatistics().getCpuTime().toString())
-                .setWallTime(splitCompletedEvent.getStatistics().getWallTime().toString())
-                .setQueuedTime(splitCompletedEvent.getStatistics().getQueuedTime().toString())
-                .setIsFailed(splitCompletedEvent.getFailureInfo().isPresent())
-                .setFailureType(
-                        splitCompletedEvent.getFailureInfo().isPresent() ?
-                                splitCompletedEvent.getFailureInfo().get().getFailureType(): null
-                )
-                .setFailureMessage(
-                        splitCompletedEvent.getFailureInfo().isPresent() ?
-                                splitCompletedEvent.getFailureInfo().get().getFailureMessage() : null
-                );
+                .setCpuTime(splitCompletedEvent.getStatistics().getCpuTime().toSeconds())
+                .setWallTime(splitCompletedEvent.getStatistics().getWallTime().toSeconds())
+                .setQueuedTime(splitCompletedEvent.getStatistics().getQueuedTime().toSeconds());
+
+        if (splitCompletedEvent.getFailureInfo().isPresent()) {
+            SplitFailureInfo splitFailureInfo = splitCompletedEvent.getFailureInfo().get();
+            splitCompleted
+                    .setIsFailed(true)
+                    .setFailureType(splitFailureInfo.getFailureType())
+                    .setFailureMessage(splitFailureInfo.getFailureMessage());
+        }
+        else {
+            splitCompleted.setIsFailed(false);
+        }
 
         return splitCompleted.build();
     }
