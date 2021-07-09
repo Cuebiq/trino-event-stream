@@ -16,14 +16,13 @@
     { "name": "Source", "type": ["null" ,"string"], "doc": "Source", "default": null },
     { "name": "Catalog", "type": ["null" ,"string"], "doc": "Catalog", "default": null },
     { "name": "Schema", "type": ["null" ,"string"], "doc": "Schema", "default": null },
-    { "name": "EstimatedExecutionTime", "type": ["null" ,"string"], "doc": "EstimatedExecutionTime", "default": null },
-    { "name": "EstimatedCpuTime", "type": ["null" ,"string"], "doc": "EstimatedCpuTime", "default": null },
+    { "name": "EstimatedExecutionTime", "type": ["null" ,"long"], "doc": "EstimatedExecutionTime", "default": null },
+    { "name": "EstimatedCpuTime", "type": ["null" ,"long"], "doc": "EstimatedCpuTime", "default": null },
     { "name": "EstimatedPeakMemory", "type": ["null" ,"long"], "doc": "EstimatedPeakMemory", "default": null },
     { "name": "TransactionId", "type": ["null" ,"string"], "doc": "Transaction Identifier", "default": null },
     { "name": "UpdateType", "type": ["null" ,"string"], "doc": "UpdateType", "default": null },
     { "name": "PreparedQuery", "type": ["null" ,"string"], "doc": "UpdateType", "default": null },
     { "name": "QueryState", "type": ["null" ,"string"], "doc": "QueryState", "default": null },
-    { "name": "Tables", "type": {"type": "array", "items": "string"}, "doc": "Tables involved in query", "default": [] },
-    { "name": "Routines", "type": {"type": "array", "items": "string"}, "doc": "Routines involved in query", "default": [] }
+    { "name": "Payload", "type": ["null" ,"string"], "doc": "Payload", "default": null }
   ]
 }

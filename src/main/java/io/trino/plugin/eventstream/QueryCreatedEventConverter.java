@@ -14,9 +14,6 @@
 package io.trino.plugin.eventstream;
 
 import io.trino.spi.eventlistener.QueryCreatedEvent;
-import io.trino.spi.eventlistener.RoutineInfo;
-
-import java.util.stream.Collectors;
 
 class QueryCreatedEventConverter {
 
@@ -41,27 +38,18 @@ class QueryCreatedEventConverter {
                 .setSchema$(queryCreatedEvent.getContext().getSchema().orElse(null))
                 .setEstimatedExecutionTime(
                         queryCreatedEvent.getContext().getResourceEstimates().getExecutionTime().isPresent() ?
-                                queryCreatedEvent.getContext().getResourceEstimates().getExecutionTime().get().toString() : null
+                                queryCreatedEvent.getContext().getResourceEstimates().getExecutionTime().get().toSeconds() : null
                 )
                 .setEstimatedCpuTime(
                         queryCreatedEvent.getContext().getResourceEstimates().getCpuTime().isPresent() ?
-                                queryCreatedEvent.getContext().getResourceEstimates().getCpuTime().get().toString() : null
+                                queryCreatedEvent.getContext().getResourceEstimates().getCpuTime().get().toSeconds() : null
                 )
                 .setEstimatedPeakMemory(queryCreatedEvent.getContext().getResourceEstimates().getPeakMemoryBytes().orElse(null))
                 .setTransactionId(queryCreatedEvent.getMetadata().getTransactionId().orElse(null))
                 .setUpdateType(queryCreatedEvent.getMetadata().getUpdateType().orElse(null))
                 .setPreparedQuery(queryCreatedEvent.getMetadata().getPreparedQuery().orElse(null))
                 .setQueryState(queryCreatedEvent.getMetadata().getQueryState())
-                .setTables(
-                        queryCreatedEvent.getMetadata().getTables().stream()
-                                .map(tableInfo -> String.join(".", tableInfo.getCatalog(), tableInfo.getSchema(), tableInfo.getTable()))
-                                .collect(Collectors.toList())
-                )
-                .setRoutines(
-                        queryCreatedEvent.getMetadata().getRoutines().stream()
-                                .map(RoutineInfo::getRoutine)
-                                .collect(Collectors.toList())
-                );
+                .setPayload(queryCreatedEvent.getMetadata().getPayload().orElse(null));
 
         return queryCreated.build();
     }

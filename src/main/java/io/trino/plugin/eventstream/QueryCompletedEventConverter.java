@@ -14,6 +14,8 @@
 package io.trino.plugin.eventstream;
 
 import io.trino.spi.eventlistener.QueryCompletedEvent;
+import io.trino.spi.eventlistener.QueryFailureInfo;
+import io.trino.spi.eventlistener.QueryOutputMetadata;
 import io.trino.spi.eventlistener.RoutineInfo;
 
 import java.util.stream.Collectors;
@@ -51,13 +53,23 @@ class QueryCompletedEventConverter {
                         queryCompletedEvent.getContext().getResourceEstimates().getPeakMemoryBytes().isPresent() ?
                                 queryCompletedEvent.getContext().getResourceEstimates().getPeakMemoryBytes().get().toString() : null
                 )
+                .setPeakUserMemoryBytes(queryCompletedEvent.getStatistics().getPeakUserMemoryBytes())
+                .setPeakTotalNonRevocableMemoryBytes(queryCompletedEvent.getStatistics().getPeakTotalNonRevocableMemoryBytes())
+                .setPeakTaskUserMemory(queryCompletedEvent.getStatistics().getPeakTaskUserMemory())
+                .setPeakTaskTotalMemory(queryCompletedEvent.getStatistics().getPeakTaskTotalMemory())
                 .setTransactionId(queryCompletedEvent.getMetadata().getTransactionId().orElse(null))
                 .setUpdateType(queryCompletedEvent.getMetadata().getUpdateType().orElse(null))
                 .setPreparedQuery(queryCompletedEvent.getMetadata().getPreparedQuery().orElse(null))
                 .setQueryState(queryCompletedEvent.getMetadata().getQueryState())
                 .setTables(
                         queryCompletedEvent.getMetadata().getTables().stream()
-                                .map(tableInfo -> String.join(".", tableInfo.getCatalog(), tableInfo.getSchema(), tableInfo.getTable()))
+                                .map(tableInfo -> String.join(
+                                        ".",
+                                        tableInfo.getCatalog(),
+                                        tableInfo.getSchema(),
+                                        tableInfo.getTable()
+                                        )
+                                )
                                 .collect(Collectors.toList())
                 )
                 .setRoutines(
@@ -67,9 +79,33 @@ class QueryCompletedEventConverter {
                 )
                 .setQueryStartTime(queryCompletedEvent.getCreateTime().toString())
                 .setQueryEndTime(queryCompletedEvent.getEndTime().toString())
-                .setCpuTime(queryCompletedEvent.getStatistics().getCpuTime().toString())
-                .setWallTime(queryCompletedEvent.getStatistics().getWallTime().toString())
-                .setQueuedTime(queryCompletedEvent.getStatistics().getQueuedTime().toString())
+                .setCpuTime(queryCompletedEvent.getStatistics().getCpuTime().toSeconds())
+                .setWallTime(queryCompletedEvent.getStatistics().getWallTime().toSeconds())
+                .setQueuedTime(queryCompletedEvent.getStatistics().getQueuedTime().toSeconds())
+                .setScheduledTime(
+                        queryCompletedEvent.getStatistics().getScheduledTime().isPresent() ?
+                            queryCompletedEvent.getStatistics().getScheduledTime().get().toSeconds() : null
+                        )
+                .setWaitingTime(
+                        queryCompletedEvent.getStatistics().getResourceWaitingTime().isPresent() ?
+                                queryCompletedEvent.getStatistics().getResourceWaitingTime().get().toSeconds() : null
+                )
+                .setAnalysisTime(
+                        queryCompletedEvent.getStatistics().getAnalysisTime().isPresent() ?
+                                queryCompletedEvent.getStatistics().getAnalysisTime().get().toSeconds() : null
+                )
+                .setPlanningTime(
+                        queryCompletedEvent.getStatistics().getPlanningTime().isPresent() ?
+                                queryCompletedEvent.getStatistics().getPlanningTime().get().toSeconds() : null
+                )
+                .setPlanningTime(
+                        queryCompletedEvent.getStatistics().getPlanningTime().isPresent() ?
+                                queryCompletedEvent.getStatistics().getPlanningTime().get().toSeconds() : null
+                )
+                .setExecutionTime(
+                        queryCompletedEvent.getStatistics().getExecutionTime().isPresent() ?
+                                queryCompletedEvent.getStatistics().getExecutionTime().get().toSeconds() : null
+                )
                 .setTotalBytes(queryCompletedEvent.getStatistics().getTotalBytes())
                 .setTotalRows(queryCompletedEvent.getStatistics().getTotalRows())
                 .setOutputBytes(queryCompletedEvent.getStatistics().getOutputBytes())
@@ -77,16 +113,53 @@ class QueryCompletedEventConverter {
                 .setWrittenBytes(queryCompletedEvent.getStatistics().getWrittenBytes())
                 .setWrittenRows(queryCompletedEvent.getStatistics().getWrittenRows())
                 .setCompletedSplits(queryCompletedEvent.getStatistics().getCompletedSplits())
-                .setIsFailed(queryCompletedEvent.getFailureInfo().isPresent())
-                .setFailureErrorCode(
-                        queryCompletedEvent.getFailureInfo().isPresent() ?
-                                queryCompletedEvent.getFailureInfo().get().getErrorCode().getCode() : null
+                .setInputTables(
+                        queryCompletedEvent.getIoMetadata().getInputs().stream()
+                        .map(queryInputMetadata -> String.join(
+                                ".",
+                                queryInputMetadata.getCatalogName(),
+                                queryInputMetadata.getSchema(),
+                                queryInputMetadata.getTable()
+                                )
+                        )
+                        .collect(Collectors.toList())
                 )
                 .setWarningCodes(
                         queryCompletedEvent.getWarnings().stream()
                                 .map(trinoWarning -> trinoWarning.getWarningCode().getCode())
                                 .collect(Collectors.toList())
-                );
+                )
+                .setPayload(queryCompletedEvent.getMetadata().getPayload().orElse(null));
+
+        if (queryCompletedEvent.getIoMetadata().getOutput().isPresent()) {
+            QueryOutputMetadata queryOutputMetadata = queryCompletedEvent.getIoMetadata().getOutput().get();
+            queryCompleted
+                    .setOutputTable(
+                            queryCompletedEvent.getIoMetadata().getOutput().isPresent() ?
+                                    String.join(
+                                            ".",
+                                            queryOutputMetadata.getCatalogName(),
+                                            queryOutputMetadata.getSchema(),
+                                            queryOutputMetadata.getTable()
+                                    )
+                                    : null
+                    )
+                    .setJsonLengthLimitExceeded(queryOutputMetadata.getJsonLengthLimitExceeded().orElse(null));
+        }
+
+        if (queryCompletedEvent.getFailureInfo().isPresent()) {
+            QueryFailureInfo queryFailureInfo = queryCompletedEvent.getFailureInfo().get();
+            queryCompleted
+                    .setIsFailed(true)
+                    .setFailureErrorCode(queryFailureInfo.getErrorCode().getCode())
+                    .setFailureType(queryFailureInfo.getFailureType().orElse(null))
+                    .setFailureHost(queryFailureInfo.getFailureHost().orElse(null))
+                    .setFailureMessage(queryFailureInfo.getFailureMessage().orElse(null))
+                    .setFailureTask(queryFailureInfo.getFailureTask().orElse(null));
+        }
+        else {
+            queryCompleted.setIsFailed(false);
+        }
 
         return queryCompleted.build();
     }
