@@ -3,6 +3,7 @@
   "namespace": "io.trino.plugin.eventstream",
   "name": "SplitCompletedEventV1",
   "fields": [
+    { "name": "EventName", "type": "string", "doc": "Event Name" },
     { "name": "QueryID", "type": "string", "doc": "Query ID" },
     { "name": "StageID", "type": "string", "doc": "Stage ID" },
     { "name": "TaskID", "type": "string", "doc": "Task ID" },

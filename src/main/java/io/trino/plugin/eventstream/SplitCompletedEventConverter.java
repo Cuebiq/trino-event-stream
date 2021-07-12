@@ -18,9 +18,12 @@ import io.trino.spi.eventlistener.SplitFailureInfo;
 
 class SplitCompletedEventConverter {
 
+    private final static String eventName = "SPLIT_COMPLETED";
+
     static SplitCompletedEventV1 convert(SplitCompletedEvent splitCompletedEvent) {
 
         SplitCompletedEventV1.Builder splitCompleted = SplitCompletedEventV1.newBuilder()
+                .setEventName(eventName)
                 .setQueryID(splitCompletedEvent.getQueryId())
                 .setStageID(splitCompletedEvent.getStageId())
                 .setTaskID(splitCompletedEvent.getTaskId())

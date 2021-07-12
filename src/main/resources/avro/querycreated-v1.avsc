@@ -3,6 +3,7 @@
   "namespace": "io.trino.plugin.eventstream",
   "name": "QueryCreatedEventV1",
   "fields": [
+    { "name": "EventName", "type": "string", "doc": "Event Name" },
     { "name": "CreateTime", "type": "string", "doc": "Query Creation time" },
     { "name": "User", "type": "string", "doc": "Query user" },
     { "name": "Environment", "type": "string", "doc": "Environment" },

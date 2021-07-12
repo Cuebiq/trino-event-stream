@@ -22,9 +22,12 @@ import java.util.stream.Collectors;
 
 class QueryCompletedEventConverter {
 
+    private final static String eventName = "QUERY_COMPLETED";
+
     static QueryCompletedEventV1 convert(QueryCompletedEvent queryCompletedEvent) {
 
         QueryCompletedEventV1.Builder queryCompleted = QueryCompletedEventV1.newBuilder()
+                .setEventName(eventName)
                 .setCreateTime(queryCompletedEvent.getCreateTime().toString())
                 .setUser(queryCompletedEvent.getContext().getUser())
                 .setEnvironment(queryCompletedEvent.getContext().getEnvironment())

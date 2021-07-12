@@ -17,9 +17,12 @@ import io.trino.spi.eventlistener.QueryCreatedEvent;
 
 class QueryCreatedEventConverter {
 
+    private final static String eventName = "QUERY_CREATED";
+
     static QueryCreatedEventV1 convert(QueryCreatedEvent queryCreatedEvent) {
 
         QueryCreatedEventV1.Builder queryCreated = QueryCreatedEventV1.newBuilder()
+                .setEventName(eventName)
                 .setCreateTime(queryCreatedEvent.getCreateTime().toString())
                 .setUser(queryCreatedEvent.getContext().getUser())
                 .setEnvironment(queryCreatedEvent.getContext().getEnvironment())
