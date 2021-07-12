@@ -56,6 +56,7 @@
     { "name": "FailureTask", "type": ["null", "string"], "doc": "FailureTask", "default": null },
     { "name": "FailureHost", "type": ["null", "string"], "doc": "FailureHost", "default": null },
     { "name": "WarningCodes", "type": {"type": "array", "items": "int"}, "doc": "Trino warning codes", "default": [] },
-    { "name": "Payload", "type": ["null" ,"string"], "doc": "Payload", "default": null }
+    { "name": "Payload", "type": ["null" ,"string"], "doc": "Payload", "default": null },
+    { "name": "ServerVersion", "type": "string", "doc": "Server Version" }
   ]
 }

@@ -23,6 +23,7 @@
     { "name": "UpdateType", "type": ["null" ,"string"], "doc": "UpdateType", "default": null },
     { "name": "PreparedQuery", "type": ["null" ,"string"], "doc": "UpdateType", "default": null },
     { "name": "QueryState", "type": ["null" ,"string"], "doc": "QueryState", "default": null },
-    { "name": "Payload", "type": ["null" ,"string"], "doc": "Payload", "default": null }
+    { "name": "Payload", "type": ["null" ,"string"], "doc": "Payload", "default": null },
+    { "name": "ServerVersion", "type": "string", "doc": "Server Version" }
   ]
 }
