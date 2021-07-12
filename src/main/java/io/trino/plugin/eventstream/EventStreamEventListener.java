@@ -77,7 +77,7 @@ public class EventStreamEventListener implements EventListener {
             kafkaProducer.send(
                     new ProducerRecord<>(
                             trinoEventTopic,
-                            queryCreatedEvent.toString(),
+                            queryCreatedEvent.getMetadata().getQueryId(),
                             QueryCreatedEventConverter.convert(queryCreatedEvent).toString()
                     )
             );
@@ -99,7 +99,7 @@ public class EventStreamEventListener implements EventListener {
             kafkaProducer.send(
                     new ProducerRecord<>(
                             trinoEventTopic,
-                            queryCompletedEvent.toString(),
+                            queryCompletedEvent.getMetadata().getQueryId(),
                             QueryCompletedEventConverter.convert(queryCompletedEvent).toString())
             );
             log.debug("Sent queryCompleted event. Query id: %s", queryCompletedEvent.getMetadata().getQueryId());
@@ -120,7 +120,7 @@ public class EventStreamEventListener implements EventListener {
             kafkaProducer.send(
                     new ProducerRecord<>(
                             trinoEventTopic,
-                            splitCompletedEvent.toString(),
+                            splitCompletedEvent.getQueryId(),
                             SplitCompletedEventConverter.convert(splitCompletedEvent).toString())
             );
             log.debug("Sent splitCompleted event. Query id %s", splitCompletedEvent.getQueryId());
