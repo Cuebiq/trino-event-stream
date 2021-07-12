@@ -35,6 +35,8 @@ public class EventStreamEventListener implements EventListener {
     private static final String queryCompletedEnabledDefault = "true";
     private static final String splitCompletedEnabledDefault = "false";
 
+    private static final String trinoEventTopicDefault = "trino.event";
+
     private final KafkaProducer kafkaProducer;
     private final String trinoEventTopic;
     private final boolean queryCreatedEnabled;
@@ -47,7 +49,7 @@ public class EventStreamEventListener implements EventListener {
     )
     {
         this.kafkaProducer = kafkaProducer;
-        trinoEventTopic = eventStreamConfig.get(TRINO_EVENT_TOPIC_CONF_KEY).toString();
+        trinoEventTopic = eventStreamConfig.getOrDefault(TRINO_EVENT_TOPIC_CONF_KEY, trinoEventTopicDefault).toString();
         queryCreatedEnabled = Boolean.parseBoolean(
                 eventStreamConfig
                         .getOrDefault(QUERY_CREATED_ENABLED_CONF_KEY, queryCreatedEnabledDefault)
