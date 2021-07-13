@@ -15,8 +15,10 @@ package io.trino.plugin.eventstream;
 
 import io.airlift.log.Logger;
 import io.trino.spi.eventlistener.*;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.util.Map;
 
@@ -69,65 +71,76 @@ public class EventStreamEventListener implements EventListener {
 
     @Override
     public void queryCreated(QueryCreatedEvent queryCreatedEvent) {
+        String queryId = queryCreatedEvent.getMetadata().getQueryId();
         if (!queryCreatedEnabled) {
-            log.debug("Ignored queryCreated event. Query id: %s", queryCreatedEvent.getMetadata().getQueryId());
+            log.debug("Ignored QUERY_CREATED event. Query id: %s", queryId);
             return;
         }
-        try {
-            kafkaProducer.send(
-                    new ProducerRecord<>(
-                            trinoEventTopic,
-                            queryCreatedEvent.getMetadata().getQueryId(),
-                            QueryCreatedEventConverter.convert(queryCreatedEvent).toString()
-                    )
-            );
-            log.debug("Sent queryCreated event. Query id: %s", queryCreatedEvent.getMetadata().getQueryId());
-        }
-        catch (Exception e) {
-            log.error("Exception in sending queryCreated event. Query id: %s", queryCreatedEvent.getMetadata().getQueryId());
-            log.error(e);
-        }
+        QueryCreatedEventV1 queryCreatedEventV1 = QueryCreatedEventConverter.convert(queryCreatedEvent);
+        kafkaProducer.send(
+                new ProducerRecord<>(
+                        trinoEventTopic,
+                        queryId,
+                        queryCreatedEventV1.toString()
+                ),
+                sendCallbackFunction(queryCreatedEventV1.getEventName(), queryId)
+        );
     }
 
     @Override
     public void queryCompleted(QueryCompletedEvent queryCompletedEvent) {
+        String queryId = queryCompletedEvent.getMetadata().getQueryId();
         if (!queryCompletedEnabled) {
-            log.debug("Ignored queryCompleted event. Query id: %s", queryCompletedEvent.getMetadata().getQueryId());
+            log.debug("Ignored QUERY_COMPLETED event. Query id: %s", queryId);
             return;
         }
-        try {
-            kafkaProducer.send(
-                    new ProducerRecord<>(
-                            trinoEventTopic,
-                            queryCompletedEvent.getMetadata().getQueryId(),
-                            QueryCompletedEventConverter.convert(queryCompletedEvent).toString())
-            );
-            log.debug("Sent queryCompleted event. Query id: %s", queryCompletedEvent.getMetadata().getQueryId());
-        }
-        catch (Exception e) {
-            log.error("Exception in sending queryCompleted event. Query id: %s", queryCompletedEvent.getMetadata().getQueryId());
-            log.error(e);
-        }
+        QueryCompletedEventV1 queryCompletedEventV1 = QueryCompletedEventConverter.convert(queryCompletedEvent);
+        kafkaProducer.send(
+                new ProducerRecord<>(
+                        trinoEventTopic,
+                        queryId,
+                        queryCompletedEventV1.toString()
+                ),
+                sendCallbackFunction(queryCompletedEventV1.getEventName(), queryId)
+        );
     }
 
     @Override
     public void splitCompleted(SplitCompletedEvent splitCompletedEvent) {
+        String queryId = splitCompletedEvent.getQueryId();
         if (!splitCompletedEnabled) {
-            log.debug("Ignored splitCompleted event. Query id %s", splitCompletedEvent.getQueryId());
+            log.debug("Ignored SPLIT_COMPLETED event. Query id: %s", queryId);
             return;
         }
-        try {
-            kafkaProducer.send(
-                    new ProducerRecord<>(
-                            trinoEventTopic,
-                            splitCompletedEvent.getQueryId(),
-                            SplitCompletedEventConverter.convert(splitCompletedEvent).toString())
-            );
-            log.debug("Sent splitCompleted event. Query id %s", splitCompletedEvent.getQueryId());
-        }
-        catch (Exception e) {
-            log.error("Exception in sending splitCompleted event. Query id: %s", splitCompletedEvent.getQueryId());
-            log.error(e);
-        }
+        SplitCompletedEventV1 splitCompletedEventV1 = SplitCompletedEventConverter.convert(splitCompletedEvent);
+        kafkaProducer.send(
+                new ProducerRecord<>(
+                        trinoEventTopic,
+                        queryId,
+                        splitCompletedEventV1.toString()
+                ),
+                sendCallbackFunction(splitCompletedEventV1.getEventName(), queryId)
+        );
+    }
+
+    private static Callback sendCallbackFunction(String eventName, String queryId) {
+        return new Callback() {
+            public void onCompletion(RecordMetadata metadata, Exception e) {
+                if (e != null) {
+                    log.error("Exception in sending %s event. Query id: %s", eventName, queryId);
+                    log.error(e);
+                }
+                else {
+                    log.debug(
+                            "Sent %s event to topic %s, partition %s, offset %s. Query id: %s",
+                            eventName,
+                            queryId,
+                            metadata.topic(),
+                            String.valueOf(metadata.partition()),
+                            String.valueOf(metadata.offset())
+                    );
+                }
+            }
+        };
     }
 }
