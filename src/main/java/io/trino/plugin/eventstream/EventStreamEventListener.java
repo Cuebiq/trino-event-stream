@@ -134,10 +134,10 @@ public class EventStreamEventListener implements EventListener {
                     log.debug(
                             "Sent %s event to topic %s, partition %s, offset %s. Query id: %s",
                             eventName,
-                            queryId,
                             metadata.topic(),
                             String.valueOf(metadata.partition()),
-                            String.valueOf(metadata.offset())
+                            String.valueOf(metadata.offset()),
+                            queryId
                     );
                 }
             }
