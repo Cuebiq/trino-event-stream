@@ -43,7 +43,6 @@ class QueryCreatedEventConverter {
                 .setUpdateType(queryCreatedEvent.getMetadata().getUpdateType().orElse(null))
                 .setPreparedQuery(queryCreatedEvent.getMetadata().getPreparedQuery().orElse(null))
                 .setQueryState(queryCreatedEvent.getMetadata().getQueryState())
-                .setPayload(queryCreatedEvent.getMetadata().getPayload().orElse(null))
                 .setServerVersion(queryCreatedEvent.getContext().getServerVersion());
 
         return queryCreated.build();

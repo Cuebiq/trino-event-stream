@@ -120,7 +120,6 @@ class QueryCompletedEventConverter {
                                 .map(trinoWarning -> trinoWarning.getWarningCode().getCode())
                                 .collect(Collectors.toList())
                 )
-                .setPayload(queryCompletedEvent.getMetadata().getPayload().orElse(null))
                 .setServerVersion(queryCompletedEvent.getContext().getServerVersion());
 
         if (queryCompletedEvent.getIoMetadata().getOutput().isPresent()) {
