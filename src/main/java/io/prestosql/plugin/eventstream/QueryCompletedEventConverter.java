@@ -11,12 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.trino.plugin.eventstream;
+package io.prestosql.plugin.eventstream;
 
-import io.trino.spi.eventlistener.QueryCompletedEvent;
-import io.trino.spi.eventlistener.QueryFailureInfo;
-import io.trino.spi.eventlistener.QueryOutputMetadata;
-import io.trino.spi.eventlistener.RoutineInfo;
+import io.prestosql.spi.eventlistener.QueryCompletedEvent;
+import io.prestosql.spi.eventlistener.QueryFailureInfo;
+import io.prestosql.spi.eventlistener.QueryOutputMetadata;
+import io.prestosql.spi.eventlistener.RoutineInfo;
 
 import java.util.stream.Collectors;
 
@@ -117,7 +117,7 @@ class QueryCompletedEventConverter {
                 )
                 .setWarningCodes(
                         queryCompletedEvent.getWarnings().stream()
-                                .map(trinoWarning -> trinoWarning.getWarningCode().getCode())
+                                .map(prestoWarning -> prestoWarning.getWarningCode().getCode())
                                 .collect(Collectors.toList())
                 )
                 .setServerVersion(queryCompletedEvent.getContext().getServerVersion());

@@ -11,10 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.trino.plugin.eventstream;
+package io.prestosql.plugin.eventstream;
 
-import io.trino.spi.eventlistener.SplitCompletedEvent;
-import io.trino.spi.eventlistener.SplitFailureInfo;
+import io.prestosql.spi.eventlistener.SplitCompletedEvent;
+import io.prestosql.spi.eventlistener.SplitFailureInfo;
 
 class SplitCompletedEventConverter {
 

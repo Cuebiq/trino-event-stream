@@ -11,12 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.trino.plugin.eventstream;
+package io.prestosql.plugin.eventstream;
 
 import com.google.common.collect.ImmutableMap;
 import io.airlift.log.Logger;
-import io.trino.spi.eventlistener.EventListener;
-import io.trino.spi.eventlistener.EventListenerFactory;
+import io.prestosql.spi.eventlistener.EventListener;
+import io.prestosql.spi.eventlistener.EventListenerFactory;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
 import java.util.Map;
@@ -30,7 +30,7 @@ public class EventStreamEventListenerFactory implements EventListenerFactory {
     @Override
     public String getName()
     {
-        return "cuebiq-trino-event-stream";
+        return "cuebiq-prestosql-event-stream";
     }
 
     @Override

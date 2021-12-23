@@ -11,10 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.trino.plugin.eventstream;
+package io.prestosql.plugin.eventstream;
 
 import io.airlift.log.Logger;
-import io.trino.spi.eventlistener.*;
+import io.prestosql.spi.eventlistener.*;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -28,7 +28,7 @@ import java.util.Map;
 public class EventStreamEventListener implements EventListener {
 
     private static final Logger log = Logger.get(EventStreamEventListener.class);
-    private static final String TRINO_EVENT_TOPIC_CONF_KEY = "event.topic";
+    private static final String PRESTO_EVENT_TOPIC_CONF_KEY = "event.topic";
     private static final String QUERY_CREATED_ENABLED_CONF_KEY = "query.created.enabled";
     private static final String QUERY_COMPLETED_ENABLED_CONF_KEY = "query.completed.enabled";
     private static final String SPLIT_COMPLETED_ENABLED_CONF_KEY = "split.completed.enabled";
@@ -37,10 +37,10 @@ public class EventStreamEventListener implements EventListener {
     private static final String queryCompletedEnabledDefault = "true";
     private static final String splitCompletedEnabledDefault = "false";
 
-    private static final String trinoEventTopicDefault = "trino.event";
+    private static final String prestoEventTopicDefault = "presto.event";
 
     private final KafkaProducer kafkaProducer;
-    private final String trinoEventTopic;
+    private final String prestoEventTopic;
     private final boolean queryCreatedEnabled;
     private final boolean queryCompletedEnabled;
     private final boolean splitCompletedEnabled;
@@ -51,7 +51,7 @@ public class EventStreamEventListener implements EventListener {
     )
     {
         this.kafkaProducer = kafkaProducer;
-        trinoEventTopic = eventStreamConfig.getOrDefault(TRINO_EVENT_TOPIC_CONF_KEY, trinoEventTopicDefault).toString();
+        prestoEventTopic = eventStreamConfig.getOrDefault(PRESTO_EVENT_TOPIC_CONF_KEY, prestoEventTopicDefault).toString();
         queryCreatedEnabled = Boolean.parseBoolean(
                 eventStreamConfig
                         .getOrDefault(QUERY_CREATED_ENABLED_CONF_KEY, queryCreatedEnabledDefault)
@@ -79,7 +79,7 @@ public class EventStreamEventListener implements EventListener {
         QueryCreatedEventV1 queryCreatedEventV1 = QueryCreatedEventConverter.convert(queryCreatedEvent);
         kafkaProducer.send(
                 new ProducerRecord<>(
-                        trinoEventTopic,
+                        prestoEventTopic,
                         queryId,
                         queryCreatedEventV1.toString()
                 ),
@@ -97,7 +97,7 @@ public class EventStreamEventListener implements EventListener {
         QueryCompletedEventV1 queryCompletedEventV1 = QueryCompletedEventConverter.convert(queryCompletedEvent);
         kafkaProducer.send(
                 new ProducerRecord<>(
-                        trinoEventTopic,
+                        prestoEventTopic,
                         queryId,
                         queryCompletedEventV1.toString()
                 ),
@@ -115,7 +115,7 @@ public class EventStreamEventListener implements EventListener {
         SplitCompletedEventV1 splitCompletedEventV1 = SplitCompletedEventConverter.convert(splitCompletedEvent);
         kafkaProducer.send(
                 new ProducerRecord<>(
-                        trinoEventTopic,
+                        prestoEventTopic,
                         queryId,
                         splitCompletedEventV1.toString()
                 ),

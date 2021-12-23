@@ -11,9 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.trino.plugin.eventstream;
+package io.prestosql.plugin.eventstream;
 
-import io.trino.spi.eventlistener.QueryCreatedEvent;
+import io.prestosql.spi.eventlistener.QueryCreatedEvent;
 
 class QueryCreatedEventConverter {
 

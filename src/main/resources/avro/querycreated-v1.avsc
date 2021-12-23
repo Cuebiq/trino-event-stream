@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "namespace": "io.trino.plugin.eventstream",
+  "namespace": "io.prestosql.plugin.eventstream",
   "name": "QueryCreatedEventV1",
   "fields": [
     { "name": "EventName", "type": "string", "doc": "Event Name" },
