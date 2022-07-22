@@ -45,7 +45,6 @@ class QueryCompletedEventConverter {
                 .setCatalog(queryCompletedEvent.getContext().getCatalog().orElse(null))
                 .setSchema$(queryCompletedEvent.getContext().getSchema().orElse(null))
                 .setPeakUserMemoryBytes(queryCompletedEvent.getStatistics().getPeakUserMemoryBytes())
-                .setPeakTotalNonRevocableMemoryBytes(queryCompletedEvent.getStatistics().getPeakTotalNonRevocableMemoryBytes())
                 .setPeakTaskUserMemory(queryCompletedEvent.getStatistics().getPeakTaskUserMemory())
                 .setPeakTaskTotalMemory(queryCompletedEvent.getStatistics().getPeakTaskTotalMemory())
                 .setTransactionId(queryCompletedEvent.getMetadata().getTransactionId().orElse(null))

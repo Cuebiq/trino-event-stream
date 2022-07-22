@@ -18,7 +18,7 @@
     { "name": "Catalog", "type": ["null" ,"string"], "doc": "Catalog", "default": null },
     { "name": "Schema", "type": ["null" ,"string"], "doc": "Schema", "default": null },
     { "name": "PeakUserMemoryBytes", "type": "long", "doc": "PeakUserMemoryBytes" },
-    { "name": "PeakTotalNonRevocableMemoryBytes", "type": "long", "doc": "PeakTotalNonRevocableMemoryBytes" },
+    { "name": "PeakTotalNonRevocableMemoryBytes", "type": ["null" ,"long"], "doc": "PeakTotalNonRevocableMemoryBytes", "default": null },
     { "name": "PeakTaskUserMemory", "type": "long", "doc": "PeakTaskUserMemory" },
     { "name": "PeakTaskTotalMemory", "type": "long", "doc": "PeakTaskTotalMemory" },
     { "name": "TransactionId", "type": ["null" ,"string"], "doc": "Transaction Identifier", "default": null },
